@@ -5,7 +5,7 @@ namespace App;
 interface Checkable
 {
     /**
-     * @return boolean
+     * @return CheckResult
      */
     public function check();
 }

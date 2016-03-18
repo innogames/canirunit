@@ -1,17 +1,17 @@
 <?php
 
-use App\Module;
-use App\PHPConfiguration;
+use App\PHP\PHPModule;
+use App\PHP\PHPConfiguration;
 use App\Services\Databases\PostgreSQL;
 
 return [
     "php" => [
-        new Module("php", "5.5.9", true),
-        new Module("pdo_pgsql", Module::ANY_VERSION, true),
-        new Module("mcrypt", Module::ANY_VERSION, true),
-        new Module("mongo", Module::ANY_VERSION, true),
-        new Module("xdebug", "2.*", false),
-        new Module("tideways", "3.*", false),
+        new PHPModule("php", "5.9.9", true),
+        new PHPModule("pdo_pgsql", PHPModule::ANY_VERSION, true),
+        new PHPModule("mcrypt", PHPModule::ANY_VERSION, true),
+        new PHPModule("mongo", PHPModule::ANY_VERSION, true),
+        new PHPModule("xdebug", "3.*", false),
+        new PHPModule("tideways", "3.*", false),
     ],
     "configuration" => [
         new PHPConfiguration("date.timezone"),
