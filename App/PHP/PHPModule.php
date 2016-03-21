@@ -3,22 +3,22 @@
 namespace App\PHP;
 
 use App\Checkable;
-use App\CheckResult;
+use App\MessageBag;
+use App\Version;
 
 class PHPModule implements Checkable
 {
-    const BIGGER_OR_EQUAL_SIGN = ">=";
-    const ANY_VERSION = "*";
+    const MODULE_PHP = 'php';
 
     /**
      * @var string
      */
-    private $name = "";
+    private $name = '';
 
     /**
-     * @var string
+     * @var Version
      */
-    private $version = "";
+    private $requiredVersion;
 
     /**
      * @var bool
@@ -33,56 +33,53 @@ class PHPModule implements Checkable
     public function __construct($name, $version, $required)
     {
         $this->name = $name;
-        $this->version = $version;
+        $this->requiredVersion = new Version($version);
         $this->required = $required;
     }
 
     /**
-     * @return CheckResult
+     * @return MessageBag
      */
     public function check()
     {
-        $checkResult = new CheckResult("PHP Extension ({$this->getName()})", $this->isRequired());
+        $messages = new MessageBag("PHP Extension ({$this->getName()})", $this->isRequired());
 
-        if ($this->version === self::ANY_VERSION) {
+        if ($this->requiredVersion->isAnyVersion()) {
             if (extension_loaded($this->getName())) {
-                $checkResult->setStatus(true);
-                $checkResult->addMessage("PHP Extension with name {$this->getName()} is loaded");
+                $messages->addMessage("PHP Extension with name {$this->getName()} is loaded", true);
             } else {
-                $checkResult->addMessage("PHP Extension with name {$this->getName()} is not loaded");
+                $messages->addMessage("PHP Extension with name {$this->getName()} is not loaded");
             }
 
-            return $checkResult;
+            return $messages;
         }
 
-        if (version_compare($this->getModuleVersion(), $this->version, self::BIGGER_OR_EQUAL_SIGN)) {
-            $checkResult->setStatus(true);
-            $checkResult->addMessage("PHP Extension with name {$this->getName()} is loaded and matches the min version requirement");
-        } else {
-            $checkResult->addMessage("PHP Extension with name {$this->getName()} is loaded but doesn't match the required min version");
-        }
+        $messages->addMessage("PHP Extension with name {$this->getName()} is loaded", true);
 
-        $checkResult->addMessage("Required min version is {$this->getVersion()} and current installed version is {$this->getModuleVersion()}");
+        $moduleVersion = $this->getModuleVersion();
+        $messages->addMessage(
+            "Required min version is {$this->getRequiredVersion()} and current installed version is {$moduleVersion}",
+            $moduleVersion->compareVersion($this->requiredVersion)
+        );
 
-        return $checkResult;
+        return $messages;
     }
 
     /**
-     * @return string
-     * @throws \Exception
+     * @return Version
      */
     private function getModuleVersion()
     {
         $moduleVersion = phpversion();
-        if ($this->name !== "php") {
+        if ($this->name !== self::MODULE_PHP) {
             $moduleVersion  = phpversion($this->getName());
         }
 
         if ($moduleVersion === false) {
-            throw new \Exception("Module {$this->getName()} doesn't exists");
+            return new Version(Version::NO_VERSION);
         }
 
-        return $moduleVersion;
+        return new Version($moduleVersion);
     }
 
     /**
@@ -94,11 +91,11 @@ class PHPModule implements Checkable
     }
 
     /**
-     * @return string
+     * @return Version
      */
-    public function getVersion()
+    public function getRequiredVersion()
     {
-        return $this->version;
+        return $this->requiredVersion;
     }
 
     /**

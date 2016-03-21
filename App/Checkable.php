@@ -5,7 +5,7 @@ namespace App;
 interface Checkable
 {
     /**
-     * @return CheckResult
+     * @return MessageBag
      */
     public function check();
 }

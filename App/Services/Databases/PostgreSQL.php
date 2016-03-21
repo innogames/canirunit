@@ -2,12 +2,13 @@
 
 namespace App\Services\Databases;
 
-use App\Checkable;
+use App\Version;
 
-class PostgreSQL extends AbstractDatabase implements Checkable
+class PostgreSQL extends AbstractDatabase
 {
     const PATTERN_VERSION = '/\d{1,3}\.\d{1,3}.\d{1,3}/';
     const PATTERN_CONNECTION = '/^.*:%d - accepting connections$/';
+    const DEFAULT_PORT = 5432;
 
     /**
      * @param string $version
@@ -17,10 +18,9 @@ class PostgreSQL extends AbstractDatabase implements Checkable
      * @param array $databases
      * @param int $port
      */
-    public function __construct($version, $host, $user, $password, array $databases, $port = 5432)
+    public function __construct($version, $host, $user, $password, array $databases, $port = self::DEFAULT_PORT)
     {
-        $this->port = $port;
-        parent::__construct($version, $host, $user, $password, $databases);
+        parent::__construct($version, $host, $user, $password, $databases, $port);
     }
 
     /**
@@ -32,35 +32,39 @@ class PostgreSQL extends AbstractDatabase implements Checkable
     }
 
     /**
-     * @return bool
-     * @throws \Exception
+     * @return Version
      */
-    protected function checkVersion()
+    protected function getVersion()
     {
         $matches = [];
-        $postgreVersion = trim(`psql --version`);
-        preg_match(self::PATTERN_VERSION, $postgreVersion, $matches);
+        preg_match(self::PATTERN_VERSION, trim(`psql --version`), $matches);
 
-        if (empty($matches)) {
-            throw new \Exception("PostgreSQL is not installed on your machine");
+        if (count($matches) === 0) {
+            return new Version(Version::NO_VERSION);
         }
 
-        return true;
+        return new Version($matches[0]);
     }
 
     /**
-     * @return bool
-     * @throws \Exception
+     * @return $this
      */
     protected function checkConnection()
     {
         $matches = [];
         preg_match(sprintf(self::PATTERN_CONNECTION, $this->port), trim(`pg_isready`), $matches);
 
-        if (empty($matches)) {
-            throw new \Exception("PostgreSQL is not accepting connections on your machine, start the server first");
+        if (count($matches) === 0) {
+            $this->messages->addMessage(
+                "{$this->getName()} is not accepting connections on your machine, start the server first"
+            );
+
+            return $this;
         }
 
-        return true;
+
+        $this->messages->addMessage("{$this->getName()} is started and running", true);
+
+        return $this;
     }
 }

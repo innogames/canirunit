@@ -3,19 +3,19 @@
 namespace App\PHP;
 
 use App\Checkable;
-use App\CheckResult;
+use App\MessageBag;
 
 class PHPConfiguration implements Checkable
 {
     /**
      * @var string
      */
-    private $name = "";
+    private $name = '';
 
     /**
      * @var mixed
      */
-    private $value = null;
+    private $value;
 
     /**
      * @param string $name
@@ -28,38 +28,41 @@ class PHPConfiguration implements Checkable
     }
 
     /**
-     * @return CheckResult
+     * @return MessageBag
      */
     public function check()
     {
-        $checkResult = new CheckResult("PHP Configuration ({$this->name})");
+        $messages = new MessageBag("PHP Configuration ({$this->name})");
 
         $configurationValue = ini_get($this->name);
         if ($configurationValue === false) {
-            $checkResult->addMessage("PHP configuration for {$this->name} doesn't exists");
-            return $checkResult;
+            $messages->addMessage("PHP configuration for {$this->name} doesn't exists");
+            return $messages;
         }
 
         if ($this->value === null) {
             if ($configurationValue !== '') {
-                $checkResult->setStatus(true);
-                $checkResult->addMessage("PHP configuration for {$this->name} is set to {$configurationValue}");
+                $messages->addMessage("PHP configuration for {$this->name} is set to {$configurationValue}", true);
             } else {
-                $checkResult->addMessage("PHP configuration for {$this->name} is not set to any value");
+                $messages->addMessage("PHP configuration for {$this->name} is not set to any value");
             }
 
-            return $checkResult;
+            return $messages;
         }
 
 
         if ($configurationValue === $this->value) {
-            $checkResult->setStatus(true);
-            $checkResult->addMessage("PHP configuration for {$this->name} is equal to the desired value {$this->value}");
+            $messages->addMessage(
+                "PHP configuration for {$this->name} is equal to the desired value {$this->value}",
+                true
+            );
         } else {
-            $checkResult->addMessage("PHP configuration for {$this->name} is not equal to the desired value {$this->value}");
+            $messages->addMessage(
+                "PHP configuration for {$this->name} is not equal to the desired value {$this->value}"
+            );
         }
 
-        return $checkResult;
+        return $messages;
     }
 
     /**
