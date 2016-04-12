@@ -2,7 +2,7 @@
 
 namespace App;
 
-interface Checkable
+interface CheckableInterface
 {
     /**
      * @return MessageBag

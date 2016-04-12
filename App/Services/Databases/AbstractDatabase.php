@@ -5,11 +5,11 @@ namespace App\Services\Databases;
 use PDO;
 use PDOException;
 use ReflectionClass;
-use App\Checkable;
+use App\CheckableInterface;
 use App\MessageBag;
 use App\Version;
 
-abstract class AbstractDatabase implements Checkable
+abstract class AbstractDatabase implements CheckableInterface
 {
     const DRIVER_POSTGRESQL = 'pgsql';
     const DRIVER_MYSQL = 'mysql';

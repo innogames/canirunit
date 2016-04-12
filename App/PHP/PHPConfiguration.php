@@ -2,10 +2,10 @@
 
 namespace App\PHP;
 
-use App\Checkable;
+use App\CheckableInterface;
 use App\MessageBag;
 
-class PHPConfiguration implements Checkable
+class PHPConfiguration implements CheckableInterface
 {
     /**
      * @var string

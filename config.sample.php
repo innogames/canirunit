@@ -16,7 +16,7 @@ return [
 
     // PHP Configuration
     new PHPConfiguration('date.timezone'),
-    new PHPConfiguration('short_open_tag', '1'),
+    new PHPConfiguration('short_open_tag', '0'),
 
     // Services
     new PostgreSQL('9.3.*', 'hostname', 'username', 'password', ['database1', 'database2', 'database3']),

@@ -2,11 +2,11 @@
 
 namespace App\PHP;
 
-use App\Checkable;
+use App\CheckableInterface;
 use App\MessageBag;
 use App\Version;
 
-class PHPModule implements Checkable
+class PHPModule implements CheckableInterface
 {
     const MODULE_PHP = 'php';
 

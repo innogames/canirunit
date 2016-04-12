@@ -53,5 +53,4 @@ class MessageBag implements JsonSerializable
             'messages' => $this->messages,
         ];
     }
-
 }
