@@ -29,8 +29,9 @@ class Kernel
     private function validate()
     {
         $result = [];
+
+        /** @var CheckableInterface $module */
         foreach ($this->config as $module) {
-            /** @var CheckableInterface $module */
             $result[] = $module->check();
         }
 
