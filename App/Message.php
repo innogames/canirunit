@@ -27,13 +27,29 @@ class Message implements JsonSerializable
     }
 
     /**
+     * @return string
+     */
+    public function getMessage()
+    {
+        return $this->message;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
      * @return array
      */
     public function jsonSerialize()
     {
         return [
-            'message' => $this->message,
-            'status' => $this->status,
+            'message' => $this->getMessage(),
+            'status' => $this->getStatus(),
         ];
     }
 }

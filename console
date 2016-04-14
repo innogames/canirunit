@@ -1,11 +1,12 @@
-#!/usr/bin/php
+#!/usr/bin/env php
 
 <?php
 
-use Cilex\Application;
+use Symfony\Component\Console\Application;
+use App\Commands\CheckCommand;
 
 include __DIR__ . '/vendor/autoload.php';
 
 $app = new Application('CanIRunIt Console', '1.0');
-//$app->command(new \Cilex\Command\GreetCommand());
+$app->add(new CheckCommand());
 $app->run();

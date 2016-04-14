@@ -17,7 +17,7 @@ class MessageBag implements JsonSerializable
     private $required = true;
 
     /**
-     * @var array
+     * @var Message[]
      */
     private $messages = [];
 
@@ -42,15 +42,40 @@ class MessageBag implements JsonSerializable
 
         return $this;
     }
+
+    /**
+     * @return string
+     */
+    public function getTitle()
+    {
+        return $this->title;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isRequired()
+    {
+        return $this->required;
+    }
+
+    /**
+     * @return Message[]
+     */
+    public function getMessages()
+    {
+        return $this->messages;
+    }
+
     /**
      * @return array
      */
     public function jsonSerialize()
     {
         return [
-            'title' => $this->title,
-            'required' => $this->required,
-            'messages' => $this->messages,
+            'title' => $this->getTitle(),
+            'required' => $this->isRequired(),
+            'messages' => $this->getMessages(),
         ];
     }
 }

@@ -2,6 +2,8 @@
 
 namespace App;
 
+use App\Exception\ConfigNotFoundException;
+
 class Kernel
 {
     /**
@@ -15,11 +17,16 @@ class Kernel
     private $result = [];
 
     /**
-     * @param array $config
+     * @throws ConfigNotFoundException
      */
-    public function __construct(array $config)
+    public function __construct()
     {
-        $this->config = $config;
+        $configFile = __DIR__ . '/../config.php';
+        if (!file_exists($configFile)) {
+            throw new ConfigNotFoundException("Config file {$configFile} not found!");
+        }
+
+        $this->config = require_once $configFile;
         $this->result = $this->validate();
     }
 
@@ -42,7 +49,7 @@ class Kernel
     /**
      * Get the app validation as array
      *
-     * @return array
+     * @return MessageBag[]
      */
     public function getResult()
     {
