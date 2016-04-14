@@ -27,7 +27,18 @@ Currently you can validate your environment only for the following constraints:
  1. Install this tool using the guide above
  2. Copy the `config.sample.php` file and paste it as `config.php`
  3. Change the `config.php` file to suite your needs
- 4. Run the application to check for your environment
+ 4. Run the application to check for your environment `./console check`
+
+## Future plans for adding new services
+
+- MySQL
+- Redis
+- Beanstalkd
+- phpunit
+- node
+- apache
+- nginx
+- Anything else you would like to see added?
 
 ## Config Example
 
