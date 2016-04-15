@@ -3,7 +3,6 @@
 namespace App\Commands;
 
 use App\Kernel;
-use App\Message;
 use App\MessageBag;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -12,7 +11,6 @@ use Symfony\Component\Console\Helper\Table;
 
 class CheckCommand extends Command
 {
-
     /**
      * Configure the CheckCommand
      */
@@ -33,22 +31,21 @@ class CheckCommand extends Command
         $kernel = new Kernel();
         $result = $kernel->getResult();
 
-        $output->writeln("<comment>Check your environment for the specified rules in the config:</comment>");
-        $errors = $this->renderCheckTable($output, $result);
+        $output->writeln('<comment>Check your environment for the specified rules in the config:</comment>');
+        $messages = $this->renderCheckTable($output, $result);
 
-        if (count($errors) !== 0) {
-            $output->writeln("\n<comment>The following problems were found with your environment:</comment>");
-            $this->renderErrorsTable($output, $errors);
-            $output->writeln("\n<error>Your environment is missing some dependencies!</error>");
+        if (count($messages) !== 0) {
+            $output->writeln("\n<comment>Some dependencies are missing for you system (yellow are optional, red are required):</comment>");
+            $this->renderMessagesTable($output, $messages);
         } else {
-            $output->writeln("\n<info>Your environment is set!</info>");
+            $output->writeln('<info>YES, you can run your Application!</info>');
         }
     }
 
     /**
      * @param OutputInterface $output
      * @param MessageBag[] $result
-     * @return Message[]
+     * @return string[]
      */
     private function renderCheckTable(OutputInterface $output, array $result)
     {
@@ -59,18 +56,22 @@ class CheckCommand extends Command
             'Status'
         ]);
 
-        /** @var Message[] $errors */
-        $errors = [];
+        $messages = [];
         foreach ($result as $messageBag) {
-            $status = '<info>Ok</info>';
+            $status = '';
+
             foreach ($messageBag->getMessages() as $message) {
+                $status = $this->formatStatus($messageBag->isRequired(), $message->getStatus());
                 if ($message->getStatus()) {
                     continue;
                 }
 
-                $errors[] = "<info>{$messageBag->getTitle()}:</info> {$message->getMessage()}";
-                $status = '<error>Error</error>';
+                if (!$messageBag->isRequired()) {
+                    $messages[] = "<info>{$messageBag->getTitle()}:</info> <comment>{$message->getMessage()}</comment>";
+                    continue;
+                }
 
+                $messages[] = "<info>{$messageBag->getTitle()}:</info> <error>{$message->getMessage()}</error>";
             }
 
             $table->addRow([
@@ -81,7 +82,7 @@ class CheckCommand extends Command
         }
         $table->render();
 
-        return $errors;
+        return $messages;
     }
 
     /**
@@ -98,18 +99,36 @@ class CheckCommand extends Command
     }
 
     /**
-     * @param OutputInterface $output
-     * @param string[] $errors
+     * @param bool $required
+     * @param bool $status
+     * @return string
      */
-    private function renderErrorsTable(OutputInterface $output, array $errors)
+    private function formatStatus($required, $status)
+    {
+        if ($status) {
+            return '<info>Installed</info>';
+        }
+
+        if (!$status && $required) {
+            return '<error>Missing [required]</error>';
+        }
+
+        return '<comment>Missing [optional]</comment>';
+    }
+
+    /**
+     * @param OutputInterface $output
+     * @param string[] $messages
+     */
+    private function renderMessagesTable(OutputInterface $output, array $messages)
     {
         $table = new Table($output);
         $table->setHeaders([
-            'Message'
+            'Message',
         ]);
 
-        foreach ($errors as $error) {
-            $table->addRow([$error]);
+        foreach ($messages as $message) {
+            $table->addRow([$message]);
         }
 
         $table->render();

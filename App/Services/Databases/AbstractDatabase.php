@@ -62,8 +62,9 @@ abstract class AbstractDatabase implements CheckableInterface
      * @param string $password
      * @param array $databases
      * @param int $port
+     * @param bool $required
      */
-    public function __construct($version, $host, $user, $password, array $databases, $port)
+    public function __construct($version, $host, $user, $password, array $databases, $port, $required = true)
     {
         $this->parseName();
 
@@ -73,7 +74,7 @@ abstract class AbstractDatabase implements CheckableInterface
         $this->password = $password;
         $this->databases = $databases;
         $this->port = $port;
-        $this->messages = new MessageBag("Database {$this->getName()} ({$this->getDriver()})");
+        $this->messages = new MessageBag("Database {$this->getName()} ({$this->getDriver()})", $required);
     }
 
     /**

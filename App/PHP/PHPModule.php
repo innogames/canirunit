@@ -21,20 +21,20 @@ class PHPModule implements CheckableInterface
     private $requiredVersion;
 
     /**
-     * @var bool
+     * @var MessageBag
      */
-    private $required = false;
+    private $messages;
 
     /**
      * @param string $name
      * @param string $version
      * @param bool $required
      */
-    public function __construct($name, $version, $required)
+    public function __construct($name, $version, $required = true)
     {
         $this->name = $name;
         $this->requiredVersion = new Version($version);
-        $this->required = $required;
+        $this->messages = new MessageBag("PHP Extension ({$this->getName()})", $required);
     }
 
     /**
@@ -42,27 +42,25 @@ class PHPModule implements CheckableInterface
      */
     public function check()
     {
-        $messages = new MessageBag("PHP Extension ({$this->getName()})", $this->isRequired());
-
         if ($this->requiredVersion->isAnyVersion()) {
             if (extension_loaded($this->getName())) {
-                $messages->addMessage("PHP Extension with name {$this->getName()} is loaded", true);
+                $this->messages->addMessage("PHP Extension with name {$this->getName()} is loaded", true);
             } else {
-                $messages->addMessage("PHP Extension with name {$this->getName()} is not loaded");
+                $this->messages->addMessage("PHP Extension with name {$this->getName()} is not loaded");
             }
 
-            return $messages;
+            return $this->messages;
         }
 
-        $messages->addMessage("PHP Extension with name {$this->getName()} is loaded", true);
+        $this->messages->addMessage("PHP Extension with name {$this->getName()} is loaded", true);
 
         $moduleVersion = $this->getModuleVersion();
-        $messages->addMessage(
+        $this->messages->addMessage(
             "Required min version is {$this->getRequiredVersion()} and current installed version is {$moduleVersion}",
             $moduleVersion->compareVersion($this->requiredVersion)
         );
 
-        return $messages;
+        return $this->messages;
     }
 
     /**
@@ -96,13 +94,5 @@ class PHPModule implements CheckableInterface
     public function getRequiredVersion()
     {
         return $this->requiredVersion;
-    }
-
-    /**
-     * @return boolean
-     */
-    public function isRequired()
-    {
-        return $this->required;
     }
 }
