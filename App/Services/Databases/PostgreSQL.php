@@ -2,11 +2,9 @@
 
 namespace App\Services\Databases;
 
-use App\Version;
-
 class PostgreSQL extends AbstractDatabase
 {
-    const PATTERN_VERSION = '/\d{1,3}\.\d{1,3}.\d{1,3}/';
+    const COMMAND = 'psql --version';
     const PATTERN_CONNECTION = '/^.*:%d - accepting connections$/';
     const DEFAULT_PORT = 5432;
 
@@ -32,22 +30,7 @@ class PostgreSQL extends AbstractDatabase
     }
 
     /**
-     * @return Version
-     */
-    protected function getVersion()
-    {
-        $matches = [];
-        preg_match(self::PATTERN_VERSION, trim(`psql --version`), $matches);
-
-        if (count($matches) === 0) {
-            return new Version(Version::NO_VERSION);
-        }
-
-        return new Version($matches[0]);
-    }
-
-    /**
-     * @return $this
+     * @return PostgreSQL
      */
     protected function checkConnection()
     {

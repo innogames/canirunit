@@ -3,6 +3,7 @@
 use App\PHP\PHPModule;
 use App\PHP\PHPConfiguration;
 use App\Services\Databases\PostgreSQL;
+use App\Services\Redis;
 use App\Version;
 
 return [
@@ -20,4 +21,5 @@ return [
 
     // Services
     new PostgreSQL('9.3.*', 'hostname', 'username', 'password', ['database1', 'database2', 'database3']),
+    new Redis('3.0.*', 'localhost', 'password', 6379),
 ];

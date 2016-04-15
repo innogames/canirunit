@@ -15,6 +15,10 @@ Currently you can validate your environment only for the following constraints:
   - Check if some php config value is set to expected value e.g. `date.timezone is equal to 'Europe\Berlin'`
 - Check for **Database** installation
   - Check if database with specified version is installed e.g. `PostgreSQL is 9.3.*`
+  - Check the connection to the database
+- Check for **Redis** installation
+  - Check if specified version is installed e.g. `Redis 3.0.*`
+  - Check if Redis is running and you can connect to redis server
 
 It supports [Semantic Versioning (SemVer)](http://semver.org/) and you can use all formats for version checks that are available in composer. Click [here](https://getcomposer.org/doc/articles/versions.md) for more information.
 
@@ -34,7 +38,6 @@ It supports [Semantic Versioning (SemVer)](http://semver.org/) and you can use a
 ## Future plans for adding new services
 
 - MySQL
-- Redis
 - Beanstalkd
 - phpunit
 - node
@@ -60,6 +63,7 @@ return [
 
     // Services
     new PostgreSQL('9.3.*', 'hostname', 'username', 'password', ['database1', 'database2', 'database3']),
+    new Redis('3.0.*', 'localhost', 'password', 6379),
 ];
 ```
 

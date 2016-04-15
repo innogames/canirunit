@@ -8,6 +8,7 @@ class Version
 {
     const NO_VERSION = 'Not Available';
     const ANY_VERSION = '*';
+    const PATTERN_VERSION = '/\d{1,3}\.\d{1,3}.\d{1,3}/';
 
     /**
      * @var string
@@ -17,9 +18,27 @@ class Version
     /**
      * @param string $version
      */
-    public function __construct($version)
+    public function __construct($version = self::NO_VERSION)
     {
         $this->version = $version;
+    }
+
+    /**
+     * @param string $command
+     * @param string $pattern
+     * @return $this|string
+     */
+    public function setVersionFromCommand($command, $pattern = self::PATTERN_VERSION)
+    {
+        $matches = [];
+        preg_match($pattern, trim(`$command`), $matches);
+
+        $this->version = self::NO_VERSION;
+        if (count($matches) !== 0) {
+            $this->version = $matches[0];
+        }
+
+        return $this;
     }
 
     /**

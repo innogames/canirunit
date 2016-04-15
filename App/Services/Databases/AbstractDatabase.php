@@ -11,6 +11,7 @@ use App\Version;
 
 abstract class AbstractDatabase implements CheckableInterface
 {
+    const COMMAND = '';
     const DRIVER_POSTGRESQL = 'pgsql';
     const DRIVER_MYSQL = 'mysql';
 
@@ -81,12 +82,7 @@ abstract class AbstractDatabase implements CheckableInterface
     abstract protected function getDriver();
 
     /**
-     * @return Version
-     */
-    abstract protected function getVersion();
-
-    /**
-     * @return $this
+     * @return AbstractDatabase
      */
     abstract protected function checkConnection();
 
@@ -103,17 +99,19 @@ abstract class AbstractDatabase implements CheckableInterface
     }
 
     /**
-     * @return $this
+     * @return AbstractDatabase
      */
     protected function checkVersion()
     {
-        $version = $this->getVersion();
+        $version = new Version();
+        $version->setVersionFromCommand(static::COMMAND);
+
         if (!$version->hasVersion()) {
-            $this->messages->addMessage("{$this->getName()} database is not installed on your machine");
-        } else {
-            $this->messages->addMessage("{$this->getName()} database is installed on your machine", true);
+            $this->messages->addMessage("{$this->getName()} database is NOT installed on your machine");
+            return $this;
         }
 
+        $this->messages->addMessage("{$this->getName()} database is installed on your machine", true);
         $this->messages->addMessage(
             "{$this->getName()} required min version is {$this->requiredVersion} and current installed version is {$version}",
             $version->compareVersion($this->requiredVersion)
@@ -123,7 +121,7 @@ abstract class AbstractDatabase implements CheckableInterface
     }
 
     /**
-     * @return $this
+     * @return AbstractDatabase
      */
     protected function checkDatabases()
     {
@@ -150,7 +148,7 @@ abstract class AbstractDatabase implements CheckableInterface
     }
 
     /**
-     * @return $this
+     * @return AbstractDatabase
      */
     protected function parseName()
     {
