@@ -4,3 +4,6 @@ vendor/
 
 # Main config file
 config.php
+
+# Other ignored files
+phpunit.phar

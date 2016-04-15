@@ -2,9 +2,10 @@
 
 namespace App;
 
+use Composer\Semver\Semver;
+
 class Version
 {
-    const BIGGER_OR_EQUAL_SIGN = '>=';
     const NO_VERSION = 'Not Available';
     const ANY_VERSION = '*';
 
@@ -27,7 +28,7 @@ class Version
      */
     public function compareVersion(Version $compareToVersion)
     {
-        return version_compare($this->getVersion(), $compareToVersion->getVersion(), Version::BIGGER_OR_EQUAL_SIGN);
+        return Semver::satisfies($this->getVersion(), $compareToVersion->getVersion());
     }
 
     /**

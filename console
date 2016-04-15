@@ -5,7 +5,7 @@
 use Symfony\Component\Console\Application;
 use App\Commands\CheckCommand;
 
-include __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '/vendor/autoload.php';
 
 $app = new Application('CanIRunIt Console', '1.0');
 $app->add(new CheckCommand());
