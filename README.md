@@ -16,6 +16,8 @@ Currently you can validate your environment only for the following constraints:
 - Check for **Database** installation
   - Check if database with specified version is installed e.g. `PostgreSQL is 9.3.*`
 
+It supports [Semantic Versioning (SemVer)](http://semver.org/) and you can use all formats for version checks that are available in composer. Click [here](https://getcomposer.org/doc/articles/versions.md) for more information.
+
 ## Installation
 
  1. `git clone` this repository.
@@ -45,16 +47,16 @@ Currently you can validate your environment only for the following constraints:
 ```php
 return [
     // PHP Modules
-    new PHPModule('php', '5.5.9', true),
+    new PHPModule('php', '^5.6', true),
     new PHPModule('pdo_pgsql', Version::ANY_VERSION, true),
     new PHPModule('mcrypt', Version::ANY_VERSION, true),
     new PHPModule('mongo', Version::ANY_VERSION, true),
-    new PHPModule('xdebug', '2.*', false),
+    new PHPModule('xdebug', '~2.4', false),
     new PHPModule('tideways', '3.*', false),
 
     // PHP Configuration
     new PHPConfiguration('date.timezone'),
-    new PHPConfiguration('short_open_tag', '0'),
+    new PHPConfiguration('short_open_tag', '1'),
 
     // Services
     new PostgreSQL('9.3.*', 'hostname', 'username', 'password', ['database1', 'database2', 'database3']),
