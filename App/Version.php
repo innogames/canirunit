@@ -47,7 +47,11 @@ class Version
      */
     public function compareVersion(Version $compareToVersion)
     {
-        return Semver::satisfies($this->getVersion(), $compareToVersion->getVersion());
+        if ($compareToVersion->hasVersion() && $this->hasVersion()) {
+            return Semver::satisfies($this->getVersion(), $compareToVersion->getVersion());
+        }
+
+        return false;
     }
 
     /**
